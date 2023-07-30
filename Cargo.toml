@@ -13,7 +13,7 @@ path = "src/lib.rs"
 utoipa = { version = "3.0.3", features = ["axum_extras"] }
 utoipa-swagger-ui = { version = "3.0.2", features = ["axum"] }
 tower = "0.4.13"
-tower-http = "0.4.3"
+tower-http = { version = "0.4.3", features = ['cors'] }
 axum = "0.6.19"
 axum-macros = "0.3.8"
 axum-server = "0.5.1"

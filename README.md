@@ -22,7 +22,7 @@ state文件主要定义项目所需上下文，例如redis链接、db链接等�
 
 - axum
 - sqlx
-- swagger
+- swagger-ui
 - postgres
 - redis
 - 待完善

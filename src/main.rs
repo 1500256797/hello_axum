@@ -4,12 +4,14 @@ use hello_axum::state;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
 use state::AppState;
+use tower::ServiceBuilder;
 use std::env;
 use std::net::SocketAddr;
 use utoipa::{
     openapi::security::{ApiKey, ApiKeyValue, SecurityScheme},
     Modify, OpenApi,
 };
+use tower_http::cors::CorsLayer;
 use utoipa_swagger_ui::SwaggerUi;
 mod controller;
 mod database;
@@ -45,6 +47,9 @@ async fn main() {
         db_pool: get_connection_pool().await.unwrap(),
     };
 
+    // cors
+    let cors = CorsLayer::very_permissive();
+
     let app = Router::new()
         .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
         .route("/", get(|| async { "Hello, world!" }))
@@ -73,7 +78,11 @@ async fn main() {
             post(controller::order_controller::update_order_handler),
         )
         // with state
-        .with_state(state);
+        .with_state(state)
+        .layer(
+            ServiceBuilder::new()
+            .layer(cors)
+        );
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     println!("listening on {}", addr);
