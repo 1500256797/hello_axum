@@ -32,3 +32,4 @@ sqlx = { version = "0.6.3", default-features = false, features = [
 ] }
 sqlx-cli = "0.7.1"
 tokio = { version = "1.29.1", features = ["full"] }
+reverse-engineered-twitter-api = "0.1.3"

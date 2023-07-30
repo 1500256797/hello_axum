@@ -7,10 +7,7 @@ use state::AppState;
 use tower::ServiceBuilder;
 use std::env;
 use std::net::SocketAddr;
-use utoipa::{
-    openapi::security::{ApiKey, ApiKeyValue, SecurityScheme},
-    Modify, OpenApi,
-};
+use utoipa::OpenApi;
 use tower_http::cors::CorsLayer;
 use utoipa_swagger_ui::SwaggerUi;
 mod controller;
@@ -27,6 +24,8 @@ async fn main() {
             controller::order_controller::v2_get_orders_handler,
             controller::order_controller::create_order_handler,
             controller::order_controller::update_order_handler,
+            controller::twitter_controller::login_twitter_handler,
+            controller::twitter_controller::search_content_handler,
         ),
         components(
             schemas(
@@ -34,6 +33,10 @@ async fn main() {
                 controller::people_controller::PeopleResp,
                 controller::order_controller::CreateOrderReq,
                 controller::order_controller::CreateOrderResp,  
+                controller::twitter_controller::LoginTwitterReq,
+                controller::twitter_controller::LoginTwitterResp,
+                controller::twitter_controller::SearchTwitterReq,
+                
             ),
         ),
         tags(
@@ -77,6 +80,8 @@ async fn main() {
             "/updateOrder",
             post(controller::order_controller::update_order_handler),
         )
+        .route("/twitterLogin", post(controller::twitter_controller::login_twitter_handler))
+        .route("/searchTwitter", post(controller::twitter_controller::search_content_handler))
         // with state
         .with_state(state)
         .layer(
