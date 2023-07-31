@@ -1,5 +1,7 @@
 use axum::{routing::get, routing::post, Router};
+use bb8::Pool;
 use dotenv::dotenv;
+use hello_axum::redis_manager::RedisConnectionManager;
 use hello_axum::state;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
@@ -45,11 +47,18 @@ async fn main() {
     )]
     struct ApiDoc;
 
+
+    let redis_connection_manager = RedisConnectionManager::new("redis://127.0.0.1:6379").unwrap();
+    
+    let redis_pool = Pool::builder()
+    .build(redis_connection_manager).await.unwrap();
+
     // new appstate
     let state = AppState {
         db_pool: get_connection_pool().await.unwrap(),
+        redis_pool: redis_pool,
     };
-
+    
     // cors
     let cors = CorsLayer::very_permissive();
 
