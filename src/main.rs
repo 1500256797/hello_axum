@@ -32,6 +32,9 @@ async fn main() {
             controller::twitter_controller::search_content_handler,
             controller::user_controller::user_login_handler,
             controller::user_controller::get_user_info_handler,
+            controller::bytes4_controller::get_signatures_handler,
+            controller::bytes4_controller::get_signatures_with_param_names_handler,
+            controller::bytes4_controller::get_signature_by_bytes_signature_handler,
         ),
         components(
             schemas(
@@ -45,6 +48,11 @@ async fn main() {
                 controller::user_controller::UserLoginReq,
                 controller::user_controller::UserLoginResp,
                 controller::user_controller::MyClaims,
+                controller::bytes4_controller::SignatureReq,
+                controller::bytes4_controller::SignatureResp,
+                controller::bytes4_controller::Signature,
+                controller::bytes4_controller::SignatureWithBytesSignatureReq,
+                controller::bytes4_controller::SignatureWithBytesSignatureResp,
             ),
         ),
         tags(
@@ -106,6 +114,9 @@ async fn main() {
         .route("/searchTwitter", post(controller::twitter_controller::search_content_handler))
         .route("/userLogin", post(controller::user_controller::user_login_handler))
         .route("/getUserInfo", get(controller::user_controller::get_user_info_handler))
+        .route("/getSignatures",get(controller::bytes4_controller::get_signatures_handler))
+        .route("/getSignaturesWithParamNames",get(controller::bytes4_controller::get_signatures_with_param_names_handler))
+        .route("/getSignatureByBytesSignature",get(controller::bytes4_controller::get_signature_by_bytes_signature_handler))
         // with state
         .with_state(state)
         .layer(

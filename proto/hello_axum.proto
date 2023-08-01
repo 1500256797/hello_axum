@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+// 定义生成代码的文件名
+package hello_axum;
+
+// 定义签名数据结构
+message Signature {
+    int64 id = 1;
+    string text_signature = 2;
+    string bytes_signature = 3;
+    string create_at = 4;
+    string update_at = 5;
+}
+
+// 定义获取签名请求结构
+message SignatureReq {
+    uint32 page_num = 1;
+    uint32 page_size = 2;
+}
+
+// 定义获取签名响应结构
+message SignatureResp {
+    bool success = 1;
+    string msg = 2;
+    uint64 total = 3;
+    repeated Signature data = 4;
+}
+
+// 定义 SignatureService 服务
+service SignatureService {
+    // 获取签名信息
+    rpc GetSignatures(SignatureReq) returns (SignatureResp) {}
+    
+    // 获取签名信息，参数名作为请求的一部分
+    rpc GetSignaturesWithParamNames(SignatureReq) returns (SignatureResp) {}
+}
