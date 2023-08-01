@@ -1,8 +1,9 @@
-use axum::{http::StatusCode, Json};
+use axum::{extract::State, http::StatusCode, Json};
+use bb8::Pool;
+use hello_axum::redis_manager::{self, RedisConnectionManager};
 use reverse_engineered_twitter_api::ReAPI;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
-
 #[derive(Debug, Deserialize, Serialize, ToSchema)]
 pub struct LoginTwitterReq {
     twitter_name: String,
@@ -25,8 +26,10 @@ pub struct LoginTwitterResp {
     )
 )]
 pub async fn login_twitter_handler(
+    State(redis_pool): State<Pool<RedisConnectionManager>>,
     Json(req): Json<LoginTwitterReq>,
 ) -> (StatusCode, Json<LoginTwitterResp>) {
+    println!("login twitter handler");
     let mut api = ReAPI::new();
     let name = req.twitter_name.clone();
     let pwd = req.twitter_password.clone();
@@ -37,7 +40,6 @@ pub async fn login_twitter_handler(
 
     // check if account is logged in
     let is_logged_in = api.is_logged_in().await;
-
     match is_logged_in {
         true => {
             let resp = LoginTwitterResp {
@@ -46,6 +48,22 @@ pub async fn login_twitter_handler(
                 twitter_name: Some(req.twitter_name.clone()),
                 login_status: Some(true),
             };
+            // set loginTwiterResp to redis hash
+            let mut conn = redis_pool.get().await.unwrap();
+            // set key
+            let key = "loginTwitterResp";
+            // set field
+            let field_name = format!("loginTwitterResp:{}", req.twitter_name.clone());
+            // set value
+            let value = serde_json::to_string(&resp).unwrap();
+            // set key value
+            let _: () = redis::cmd("HMSET")
+                .arg(key)
+                .arg(field_name)
+                .arg(value)
+                .query_async(&mut *conn)
+                .await
+                .unwrap();
             (StatusCode::CREATED, Json(resp))
         }
         false => {
