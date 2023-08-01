@@ -3,13 +3,15 @@ use bb8::Pool;
 use dotenv::dotenv;
 use hello_axum::redis_manager::RedisConnectionManager;
 use hello_axum::state;
+use jsonwebtoken::{Validation, Algorithm, DecodingKey};
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
 use state::AppState;
 use tower::ServiceBuilder;
 use std::env;
 use std::net::SocketAddr;
-use utoipa::OpenApi;
+use utoipa::{OpenApi, Modify, openapi::security::{SecurityScheme, ApiKey, ApiKeyValue, HttpBuilder, HttpAuthScheme}};
+use axum_jwt_auth::{JwtDecoderState,LocalDecoder, Decoder};
 use tower_http::cors::CorsLayer;
 use utoipa_swagger_ui::SwaggerUi;
 mod controller;
@@ -28,6 +30,8 @@ async fn main() {
             controller::order_controller::update_order_handler,
             controller::twitter_controller::login_twitter_handler,
             controller::twitter_controller::search_content_handler,
+            controller::user_controller::user_login_handler,
+            controller::user_controller::get_user_info_handler,
         ),
         components(
             schemas(
@@ -38,7 +42,9 @@ async fn main() {
                 controller::twitter_controller::LoginTwitterReq,
                 controller::twitter_controller::LoginTwitterResp,
                 controller::twitter_controller::SearchTwitterReq,
-                
+                controller::user_controller::UserLoginReq,
+                controller::user_controller::UserLoginResp,
+                controller::user_controller::MyClaims,
             ),
         ),
         tags(
@@ -53,10 +59,17 @@ async fn main() {
     let redis_pool = Pool::builder()
     .build(redis_connection_manager).await.unwrap();
 
+    // decoder 
+    let keys = vec![DecodingKey::from_secret("secret".as_ref())];
+    let validation = Validation::new(Algorithm::HS256);
+    let jwt_decoder : Decoder= LocalDecoder::new(keys, validation).into();
     // new appstate
     let state = AppState {
         db_pool: get_connection_pool().await.unwrap(),
         redis_pool: redis_pool,
+        jwt_decoder: JwtDecoderState{
+            decoder : jwt_decoder
+        }
     };
     
     // cors
@@ -91,6 +104,8 @@ async fn main() {
         )
         .route("/twitterLogin", post(controller::twitter_controller::login_twitter_handler))
         .route("/searchTwitter", post(controller::twitter_controller::search_content_handler))
+        .route("/userLogin", post(controller::user_controller::user_login_handler))
+        .route("/getUserInfo", get(controller::user_controller::get_user_info_handler))
         // with state
         .with_state(state)
         .layer(
