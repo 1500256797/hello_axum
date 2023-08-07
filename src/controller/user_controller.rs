@@ -74,6 +74,10 @@ pub async fn user_login_handler(Json(user_login_param): Json<UserLoginReq>) -> J
 #[utoipa::path(get, path = "/getUserInfo", 
     responses(
         (status = 200 , description = "get user info ", body = [MyClaims]),
+    ),
+    security (
+        (),
+        ("jwt" = [])
     )
 )]
 pub async fn get_user_info_handler(Claims(my_claims): Claims<MyClaims>) -> Json<MyClaims> {

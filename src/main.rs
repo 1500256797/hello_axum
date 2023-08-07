@@ -10,7 +10,7 @@ use state::AppState;
 use tower::ServiceBuilder;
 use std::env;
 use std::net::SocketAddr;
-use utoipa::OpenApi;
+use utoipa::{OpenApi, Modify, openapi::security::{SecurityScheme, ApiKey, ApiKeyValue}};
 use axum_jwt_auth::{JwtDecoderState,LocalDecoder, Decoder};
 use tower_http::cors::CorsLayer;
 use utoipa_swagger_ui::SwaggerUi;
@@ -56,11 +56,25 @@ async fn main() {
                 controller::bytes4_controller::SignatureWithBytesSignatureResp,
             ),
         ),
+        modifiers(&SecurityAddon),
         tags(
             (name = "hello_axum", description = "axum 模版工程、集成pg、redis、swagger、sqlx")
         )
     )]
     struct ApiDoc;
+
+    struct SecurityAddon;
+
+    impl Modify for SecurityAddon {
+        fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+            if let Some(components) = openapi.components.as_mut() {
+                components.add_security_scheme(
+                    "jwt",
+                    SecurityScheme::ApiKey(ApiKey::Header(ApiKeyValue::new("Authorization"))),
+                )
+            }
+        }
+    }
 
 
     let redis_connection_manager = RedisConnectionManager::new("redis://127.0.0.1:6379").unwrap();
