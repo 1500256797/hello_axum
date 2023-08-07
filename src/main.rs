@@ -8,15 +8,16 @@ use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
 use state::AppState;
 use tower::ServiceBuilder;
+use tower_http::cors::CorsLayer;
+use tracing::Level;
 use std::env;
 use std::net::SocketAddr;
 use utoipa::{OpenApi, Modify, openapi::security::{SecurityScheme, ApiKey, ApiKeyValue}};
 use axum_jwt_auth::{JwtDecoderState,LocalDecoder, Decoder};
-use tower_http::cors::CorsLayer;
 use utoipa_swagger_ui::SwaggerUi;
 mod controller;
 mod database;
-
+use tower_http::trace::{self, TraceLayer};
 
 #[tokio::main]
 async fn main() {
@@ -75,6 +76,13 @@ async fn main() {
             }
         }
     }
+    // tracing 
+    tracing_subscriber::fmt()
+    .with_target(false)
+    .pretty()
+    .init();
+
+
 
 
     let redis_connection_manager = RedisConnectionManager::new("redis://127.0.0.1:6379").unwrap();
@@ -109,11 +117,19 @@ async fn main() {
         .with_state(state)
         .layer(
             ServiceBuilder::new()
+            .layer(
+                TraceLayer::new_for_http()
+                .make_span_with(trace::DefaultMakeSpan::new()
+                    .level(Level::INFO))
+                .on_response(trace::DefaultOnResponse::new()
+                    .level(Level::INFO)),
+                // tracelayer end
+            )
             .layer(cors)
         );
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    println!("listening on {}", addr);
+    tracing::info!("listening on {}", addr);
     axum_server::bind(addr)
         .serve(app.into_make_service())
         .await
