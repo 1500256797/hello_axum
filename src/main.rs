@@ -82,9 +82,6 @@ async fn main() {
     .pretty()
     .init();
 
-
-
-
     let redis_connection_manager = RedisConnectionManager::new("redis://127.0.0.1:6379").unwrap();
     
     let redis_pool = Pool::builder()
