@@ -1,6 +1,11 @@
 // define People struct
 
-use axum::{http::StatusCode, Json};
+use axum::{
+    http::StatusCode,
+    routing::{get, post},
+    Json, Router,
+};
+use hello_axum::state::AppState;
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
 
@@ -16,6 +21,13 @@ pub struct PeopleResp {
     msg: String,
     name: Option<String>,
     age: Option<u8>,
+}
+
+// define router
+pub fn router() -> Router<AppState> {
+    Router::new()
+        .route("/createPeopleInfo", post(create_people_handler))
+        .route("/getPeopleInfo", get(get_people_info_handler))
 }
 
 #[utoipa::path(post, path = "/createPeopleInfo", 

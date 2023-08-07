@@ -1,4 +1,5 @@
-use axum::{extract::Query, Json};
+use axum::{extract::Query, routing::get, Json, Router};
+use hello_axum::state::AppState;
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
 
@@ -23,6 +24,20 @@ pub struct SignatureResp {
     pub msg: String,
     pub total: u64,
     pub data: Vec<Option<Signature>>,
+}
+
+// define router
+pub fn router() -> Router<AppState> {
+    Router::new()
+        .route("/getSignatures", get(get_signatures_handler))
+        .route(
+            "/getSignaturesWithParamNames",
+            get(get_signatures_with_param_names_handler),
+        )
+        .route(
+            "/getSignatureByBytesSignature",
+            get(get_signature_by_bytes_signature_handler),
+        )
 }
 
 // 分页查询列表

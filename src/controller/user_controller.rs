@@ -1,7 +1,11 @@
 // login controller
 
-use axum::Json;
+use axum::{
+    routing::{get, post},
+    Json, Router,
+};
 use axum_jwt_auth::Claims;
+use hello_axum::state::AppState;
 use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
 use serde::{Deserialize, Serialize};
 use sqlx::types::chrono::Utc;
@@ -27,6 +31,13 @@ pub struct UserLoginResp {
 pub struct MyClaims {
     pub wallet_address: String,
     pub exp: u64,
+}
+
+// define router
+pub fn router() -> Router<AppState> {
+    Router::new()
+        .route("/userLogin", post(user_login_handler))
+        .route("/getUserInfo", get(get_user_info_handler))
 }
 
 #[utoipa::path(post, path = "/userLogin", 

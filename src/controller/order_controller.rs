@@ -1,8 +1,22 @@
 use crate::database;
-use axum::{extract::State, Json};
+use axum::{
+    extract::State,
+    routing::{get, post},
+    Json, Router,
+};
+use hello_axum::state::AppState;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use utoipa::ToSchema;
+
+// define router
+pub fn router() -> Router<AppState> {
+    Router::new()
+        .route("/getOrders", get(get_orders_handler))
+        .route("/getOrdersV2", get(v2_get_orders_handler))
+        .route("/createOrder", post(create_order_handler))
+        .route("/updateOrder", post(update_order_handler))
+}
 
 #[utoipa::path(get, path = "/getOrders", 
     responses(

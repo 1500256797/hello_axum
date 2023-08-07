@@ -10,12 +10,13 @@ use state::AppState;
 use tower::ServiceBuilder;
 use std::env;
 use std::net::SocketAddr;
-use utoipa::{OpenApi, Modify, openapi::security::{SecurityScheme, ApiKey, ApiKeyValue, HttpBuilder, HttpAuthScheme}};
+use utoipa::OpenApi;
 use axum_jwt_auth::{JwtDecoderState,LocalDecoder, Decoder};
 use tower_http::cors::CorsLayer;
 use utoipa_swagger_ui::SwaggerUi;
 mod controller;
 mod database;
+
 
 #[tokio::main]
 async fn main() {
@@ -72,7 +73,7 @@ async fn main() {
     let validation = Validation::new(Algorithm::HS256);
     let jwt_decoder : Decoder= LocalDecoder::new(keys, validation).into();
     // new appstate
-    let state = AppState {
+    let state: AppState = AppState {
         db_pool: get_connection_pool().await.unwrap(),
         redis_pool: redis_pool,
         jwt_decoder: JwtDecoderState{
@@ -82,41 +83,14 @@ async fn main() {
     
     // cors
     let cors = CorsLayer::very_permissive();
-
     let app = Router::new()
         .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
         .route("/", get(|| async { "Hello, world!" }))
-        .route(
-            "/getPeopleInfo",
-            get(controller::people_controller::get_people_info_handler),
-        )
-        .route(
-            "/createPeopleInfo",
-            post(controller::people_controller::create_people_handler),
-        )
-        .route(
-            "/getOrders",
-            get(controller::order_controller::get_orders_handler),
-        )
-        .route(
-            "/getOrdersV2",
-            get(controller::order_controller::v2_get_orders_handler),
-        )
-        .route(
-            "/createOrder",
-            post(controller::order_controller::create_order_handler),
-        )
-        .route(
-            "/updateOrder",
-            post(controller::order_controller::update_order_handler),
-        )
-        .route("/twitterLogin", post(controller::twitter_controller::login_twitter_handler))
-        .route("/searchTwitter", post(controller::twitter_controller::search_content_handler))
-        .route("/userLogin", post(controller::user_controller::user_login_handler))
-        .route("/getUserInfo", get(controller::user_controller::get_user_info_handler))
-        .route("/getSignatures",get(controller::bytes4_controller::get_signatures_handler))
-        .route("/getSignaturesWithParamNames",get(controller::bytes4_controller::get_signatures_with_param_names_handler))
-        .route("/getSignatureByBytesSignature",get(controller::bytes4_controller::get_signature_by_bytes_signature_handler))
+        .merge(controller::people_controller::router())
+        .merge(controller::order_controller::router())
+        .merge(controller::user_controller::router())
+        .merge(controller::bytes4_controller::router())
+        .merge(controller::twitter_controller::router())
         // with state
         .with_state(state)
         .layer(

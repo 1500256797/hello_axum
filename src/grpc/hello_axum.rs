@@ -38,8 +38,8 @@ pub struct SignatureResp {
 /// Generated client implementations.
 pub mod signature_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
-    use tonic::codegen::http::Uri;
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     /// 定义 SignatureService 服务
     #[derive(Debug, Clone)]
     pub struct SignatureServiceClient<T> {
@@ -84,8 +84,9 @@ pub mod signature_service_client {
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             SignatureServiceClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -125,20 +126,22 @@ pub mod signature_service_client {
             &mut self,
             request: impl tonic::IntoRequest<super::SignatureReq>,
         ) -> std::result::Result<tonic::Response<super::SignatureResp>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/hello_axum.SignatureService/GetSignatures");
+            let path = http::uri::PathAndQuery::from_static(
+                "/hello_axum.SignatureService/GetSignatures",
+            );
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new(
-                "hello_axum.SignatureService",
-                "GetSignatures",
-            ));
+            req.extensions_mut()
+                .insert(GrpcMethod::new("hello_axum.SignatureService", "GetSignatures"));
             self.inner.unary(req, path, codec).await
         }
         /// 获取签名信息，参数名作为请求的一部分
@@ -146,21 +149,27 @@ pub mod signature_service_client {
             &mut self,
             request: impl tonic::IntoRequest<super::SignatureReq>,
         ) -> std::result::Result<tonic::Response<super::SignatureResp>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/hello_axum.SignatureService/GetSignaturesWithParamNames",
             );
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new(
-                "hello_axum.SignatureService",
-                "GetSignaturesWithParamNames",
-            ));
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "hello_axum.SignatureService",
+                        "GetSignaturesWithParamNames",
+                    ),
+                );
             self.inner.unary(req, path, codec).await
         }
     }
@@ -207,7 +216,10 @@ pub mod signature_service_server {
                 max_encoding_message_size: None,
             }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
@@ -263,15 +275,23 @@ pub mod signature_service_server {
                 "/hello_axum.SignatureService/GetSignatures" => {
                     #[allow(non_camel_case_types)]
                     struct GetSignaturesSvc<T: SignatureService>(pub Arc<T>);
-                    impl<T: SignatureService> tonic::server::UnaryService<super::SignatureReq> for GetSignaturesSvc<T> {
+                    impl<
+                        T: SignatureService,
+                    > tonic::server::UnaryService<super::SignatureReq>
+                    for GetSignaturesSvc<T> {
                         type Response = super::SignatureResp;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::SignatureReq>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).get_signatures(request).await };
+                            let fut = async move {
+                                (*inner).get_signatures(request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -300,12 +320,18 @@ pub mod signature_service_server {
                 }
                 "/hello_axum.SignatureService/GetSignaturesWithParamNames" => {
                     #[allow(non_camel_case_types)]
-                    struct GetSignaturesWithParamNamesSvc<T: SignatureService>(pub Arc<T>);
-                    impl<T: SignatureService> tonic::server::UnaryService<super::SignatureReq>
-                        for GetSignaturesWithParamNamesSvc<T>
-                    {
+                    struct GetSignaturesWithParamNamesSvc<T: SignatureService>(
+                        pub Arc<T>,
+                    );
+                    impl<
+                        T: SignatureService,
+                    > tonic::server::UnaryService<super::SignatureReq>
+                    for GetSignaturesWithParamNamesSvc<T> {
                         type Response = super::SignatureResp;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::SignatureReq>,
@@ -340,14 +366,18 @@ pub mod signature_service_server {
                     };
                     Box::pin(fut)
                 }
-                _ => Box::pin(async move {
-                    Ok(http::Response::builder()
-                        .status(200)
-                        .header("grpc-status", "12")
-                        .header("content-type", "application/grpc")
-                        .body(empty_body())
-                        .unwrap())
-                }),
+                _ => {
+                    Box::pin(async move {
+                        Ok(
+                            http::Response::builder()
+                                .status(200)
+                                .header("grpc-status", "12")
+                                .header("content-type", "application/grpc")
+                                .body(empty_body())
+                                .unwrap(),
+                        )
+                    })
+                }
             }
         }
     }

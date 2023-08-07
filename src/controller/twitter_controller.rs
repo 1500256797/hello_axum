@@ -1,6 +1,9 @@
-use axum::{extract::State, http::StatusCode, Json};
+use axum::{extract::State, http::StatusCode, routing::post, Json, Router};
 use bb8::Pool;
-use hello_axum::redis_manager::{self, RedisConnectionManager};
+use hello_axum::{
+    redis_manager::{self, RedisConnectionManager},
+    state::AppState,
+};
 use reverse_engineered_twitter_api::ReAPI;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
@@ -17,6 +20,13 @@ pub struct LoginTwitterResp {
     msg: String,
     twitter_name: Option<String>,
     login_status: Option<bool>,
+}
+
+// define router
+pub fn router() -> Router<AppState> {
+    Router::new()
+        .route("/searchTwitter", post(search_content_handler))
+        .route("/twitterLogin", post(login_twitter_handler))
 }
 
 #[utoipa::path(post, path = "/twitterLogin", 
