@@ -14,7 +14,7 @@ redis = { version = "0.23.0", features = ["tokio-comp", "connection-manager"] }
 utoipa = { version = "3.0.3", features = ["axum_extras"] }
 utoipa-swagger-ui = { version = "3.0.2", features = ["axum"] }
 tower = "0.4.13"
-tower-http = { version = "0.4.3", features = ['cors', 'trace'] }
+tower-http = { version = "0.4.3", features = ['cors', 'trace', 'fs'] }
 axum = "0.6.19"
 axum-macros = "0.3.8"
 axum-server = "0.5.1"
@@ -42,6 +42,9 @@ prost = "0.11.9"
 tonic = "0.9.2"
 tracing = "0.1.37"
 tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
+futures = "0.3.28"
+headers = "0.3.8"
+tokio-stream = "0.1.14"
 
 
 # for grpc

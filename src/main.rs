@@ -9,8 +9,9 @@ use sqlx::PgPool;
 use state::AppState;
 use tower::ServiceBuilder;
 use tower_http::cors::CorsLayer;
+use tower_http::services;
 use tracing::Level;
-use std::env;
+use std::{env, path::PathBuf};
 use std::net::SocketAddr;
 use utoipa::{OpenApi, Modify, openapi::security::{SecurityScheme, ApiKey, ApiKeyValue}};
 use axum_jwt_auth::{JwtDecoderState,LocalDecoder, Decoder};
@@ -102,7 +103,14 @@ async fn main() {
     
     // cors
     let cors = CorsLayer::very_permissive();
+
+    // assets
+    let assets_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("assets");
+
+    let static_files_service = services::ServeDir::new(assets_dir).append_index_html_on_directories(true);
+    
     let app = Router::new()
+        .fallback_service(static_files_service)
         .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
         .route("/", get(|| async { "Hello, world!" }))
         .merge(controller::people_controller::router())
@@ -110,6 +118,7 @@ async fn main() {
         .merge(controller::user_controller::router())
         .merge(controller::bytes4_controller::router())
         .merge(controller::twitter_controller::router())
+        .merge(controller::sse_controller::router())
         // with state
         .with_state(state)
         .layer(
