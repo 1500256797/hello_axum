@@ -12,7 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+          # check it to your workflow can access it
+      # from: https://github.com/actions/checkout
+    - name: Checkout Repository master branch
+      uses:  actions/checkout@v3
 
     - name: Copy repository contents via scp
       uses: appleboy/scp-action@master
