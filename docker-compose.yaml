@@ -7,6 +7,8 @@ services:
         volumes:
             - ./redis-data:/data
         restart: always
+        networks:
+            - axum-network
     postgres:
         image: postgres:alpine
         volumes:
@@ -16,6 +18,8 @@ services:
             - POSTGRES_PASSWORD=88888888
             - POSTGRES_DB=axumdb3
         restart: always
+        networks:
+            - axum-network
     axum:
         build: .
         ports:
