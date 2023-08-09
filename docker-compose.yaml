@@ -22,3 +22,8 @@ services:
             - 3000:3000
         environment:
             - DATABASE_URL=postgresql://postgres:88888888@localhost:5432/axumdb3?schema=public
+        networks:
+            - axum-network
+networks:
+    axum-network:
+        driver: bridge
