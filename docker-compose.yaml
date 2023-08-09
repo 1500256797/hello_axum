@@ -14,7 +14,7 @@ services:
         environment:
             - POSTGRES_USER=postgres
             - POSTGRES_PASSWORD=88888888
-            - POSTGRES_DB=postgres
+            - POSTGRES_DB=axumdb3
         restart: always
     axum:
         build: .
