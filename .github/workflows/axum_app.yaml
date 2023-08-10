@@ -35,4 +35,6 @@ jobs:
         script: |
           cd /root
           docker-compose down
+          # delete web app image
+          docker rmi -f root_axum
           docker-compose up -d
