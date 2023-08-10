@@ -20,6 +20,8 @@ services:
         restart: always
         networks:
             - axum-network
+        ports:
+            - '5433:5432'
     axum:
         build: .
         ports:
@@ -28,6 +30,9 @@ services:
             - .env
         networks:
             - axum-network
+        depends_on:
+            - redis
+            - postgres
 networks:
     axum-network:
         driver: bridge

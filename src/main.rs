@@ -83,7 +83,11 @@ async fn main() {
     .pretty()
     .init();
 
-    let redis_connection_manager = RedisConnectionManager::new("redis://127.0.0.1:6379").unwrap();
+    // load .env
+    dotenv().ok();
+    // get database url
+    let redis_url = env::var("REDIS_URL").expect("REDIS_URL must be set");
+    let redis_connection_manager = RedisConnectionManager::new(redis_url).unwrap();
     
     let redis_pool = Pool::builder()
     .build(redis_connection_manager).await.unwrap();
