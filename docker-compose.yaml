@@ -24,8 +24,8 @@ services:
         build: .
         ports:
             - 3000:3000
-        environment:
-            - DATABASE_URL=postgresql://postgres:88888888@localhost:5432/axumdb3?schema=public
+        env_file:
+            - .env
         networks:
             - axum-network
 networks:
