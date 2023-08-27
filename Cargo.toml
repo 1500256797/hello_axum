@@ -7,6 +7,14 @@ edition = "2021"
 [lib]
 path = "src/lib.rs"
 
+[[bin]]
+name = "event"
+path = "src/bin/event_filter.rs"
+
+[[bin]]
+name = "tg_bot"
+path = "src/bin/tg_bot.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -45,7 +53,11 @@ tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
 futures = "0.3.28"
 headers = "0.3.8"
 tokio-stream = "0.1.14"
-
+ethers = { version = "2.0.8", features = ["rustls", "ws"] }
+eyre = "0.6.8"
+teloxide = { version = "0.12", features = ["macros"] }
+log = "0.4"
+pretty_env_logger = "0.5.0"
 
 # for grpc
 [build-dependencies]
