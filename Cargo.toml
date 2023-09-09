@@ -53,11 +53,28 @@ tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
 futures = "0.3.28"
 headers = "0.3.8"
 tokio-stream = "0.1.14"
-ethers = { version = "2.0.8", features = ["rustls", "ws"] }
+ethers = { version = "2.0.8", features = [
+    "abigen",
+    "rustls",
+    "ws",
+    "ethers-solc",
+] }
 eyre = "0.6.8"
-teloxide = { version = "0.12", features = ["macros"] }
+teloxide = { version = "0.12", features = ["macros", "ctrlc_handler"] }
 log = "0.4"
 pretty_env_logger = "0.5.0"
+ethers-etherscan = "2.0.9"
+ethers-core = "2.0.9"
+ethers-solc = "2.0.9"
+serial_test = "2.0.0"
+openai_dive = { version = "0.2.13", features = [
+    "stream",
+    "rustls-tls",
+    "simple",
+] }
+lazy_static = "1.4.0"
+libsqlite3-sys = "0.26.0"
+
 
 # for grpc
 [build-dependencies]

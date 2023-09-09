@@ -1,0 +1,138 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'hello_axum'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=hello_axum"
+                ],
+                "filter": {
+                    "name": "hello_axum",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'event'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=event",
+                    "--package=hello_axum"
+                ],
+                "filter": {
+                    "name": "event",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'event'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=event",
+                    "--package=hello_axum"
+                ],
+                "filter": {
+                    "name": "event",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'tg_bot'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=tg_bot",
+                    "--package=hello_axum"
+                ],
+                "filter": {
+                    "name": "tg_bot",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'tg_bot'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=tg_bot",
+                    "--package=hello_axum"
+                ],
+                "filter": {
+                    "name": "tg_bot",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'hello_axum'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=hello_axum",
+                    "--package=hello_axum"
+                ],
+                "filter": {
+                    "name": "hello_axum",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'hello_axum'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=hello_axum",
+                    "--package=hello_axum"
+                ],
+                "filter": {
+                    "name": "hello_axum",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
