@@ -213,3 +213,12 @@ pub fn second_level_inline_keyboard() -> InlineKeyboardMarkup {
     let keyboard = vec![buttons];
     InlineKeyboardMarkup::new(keyboard)
 }
+
+pub fn deploy_contract_keyboard() -> InlineKeyboardMarkup {
+    let buttons: Vec<InlineKeyboardButton> = vec![
+        InlineKeyboardButton::callback("Deploy Now🔥", "deploy"),
+        InlineKeyboardButton::callback("Cancel", "cancel"),
+    ];
+    let keyboard = vec![buttons];
+    InlineKeyboardMarkup::new(keyboard)
+}

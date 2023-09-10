@@ -1,4 +1,7 @@
-use hello_axum::keyboard::{one_level_inline_keyboard, second_level_inline_keyboard, ManuState};
+use hello_axum::deploy_contract;
+use hello_axum::keyboard::{
+    deploy_contract_keyboard, one_level_inline_keyboard, second_level_inline_keyboard, ManuState,
+};
 use lazy_static::lazy_static;
 use std::{collections::HashMap, error::Error};
 use teloxide::dispatching::UpdateFilterExt;
@@ -100,7 +103,7 @@ async fn inline_keyboard_callback_handler(
         .entry(chat_id)
         .or_insert_with(|| ManuState::default());
     let data = q.data.clone();
-    let mut text = "Eth Gas: 10 === Block: 1808696 === ETH: $1643 \n
+    let text = "Eth Gas: 10 === Block: 1808696 === ETH: $1643 \n
     💵TokenTool WEBSITE  Tutorials \n"
         .to_string();
     if let Some(data) = data.clone() {
@@ -186,12 +189,13 @@ async fn inline_keyboard_callback_handler(
                     _ => {}
                 }
                 let latest_menu_state = menu_state.clone();
-                let keyboard = one_level_inline_keyboard(latest_menu_state).await;
+                let _keyboard = one_level_inline_keyboard(latest_menu_state).await;
+                let deploy_keyboard = deploy_contract_keyboard();
                 // let text = "请选择要部署的代币类型:\n".to_string();
                 bot.edit_message_text(chat_id, message_id, text).await?;
                 // 使用 editMessageText 方法编辑消息
                 bot.edit_message_reply_markup(chat_id, message_id)
-                    .reply_markup(keyboard)
+                    .reply_markup(deploy_keyboard)
                     .await?;
                 // replykeboard remove
 
@@ -199,6 +203,31 @@ async fn inline_keyboard_callback_handler(
                 bot.send_message(chat_id, "选择要部署的代币类型:\n".to_string())
                     .reply_markup(res_kb)
                     .await?;
+            }
+            "deploy" => {
+                // 调用foundry 部署合约
+                let private_key =
+                    "0x0d93fe15801e6ea1cda06391e59fa69cd97fdd45e4038ebb29cf65e882d0d4b3";
+                let rpc_url =
+                    "https://eth-goerli.g.alchemy.com/v2/wlXHln-ov4d7diXYhbVCKIm9s3pjnf2l";
+
+                let etherscan_api_key = "Q2TH6RVMM4UMBRSP7VDCR4CGF5T2INC3HZ";
+                // let verify_args = "src/CleanErc20.sol:GLDToken";
+                // let constructor_args = "999999999999999999999999999";
+                let constructor_args =
+                    "pixiu2 px2 18 888888888888888888 0x04D178F683Be8aD48ed718Bb49A71405DD6dA2f5";
+                let verify_args = "src/Pixu.sol:PigLido";
+                let deployed_res = deploy_contract::deploy_verify_contract(
+                    rpc_url,
+                    constructor_args,
+                    private_key,
+                    etherscan_api_key,
+                    verify_args,
+                )
+                .await
+                .unwrap();
+                let deploy_res_text = format!("{:?}", deployed_res);
+                bot.send_message(chat_id, deploy_res_text).await?;
             }
             _ => {
                 // 打印默认的值

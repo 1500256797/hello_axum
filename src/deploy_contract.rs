@@ -5,6 +5,7 @@ use std::process::Command;
 
 // const target_directory: &str = "/Users/ouhuang/Documents/hello_axum/hello_wtf";
 const TARGET_DIRECTORY: &str = "/Users/ouhuang/Documents/hello_axum/hello_wtf";
+
 #[tokio::test]
 async fn deploy_contract_test() {
     // 切换到目标目录
@@ -79,7 +80,7 @@ pub async fn deploy_a_clean_erc20() -> Result<String> {
     }
 }
 
-async fn deploy_verify_contract(
+pub async fn deploy_verify_contract(
     rpc_url: &str,
     constructor_args: &str,
     private_key: &str,
