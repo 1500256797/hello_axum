@@ -1,0 +1,3 @@
+[submodule "hello_wtf"]
+	path = hello_wtf
+	url = ./hello_wtf
