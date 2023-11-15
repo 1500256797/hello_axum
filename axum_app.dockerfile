@@ -18,7 +18,7 @@ ENV SQLX_OFFLINE true
 # Build our project
 RUN apt-get update -y \
     && apt-get install protobuf-compiler -y
-RUN cargo build --bin tg_bot --release
+RUN cargo build --bin axum_app --release
 
 # 运行时阶段
 FROM debian:bullseye-slim AS runtime
@@ -35,7 +35,7 @@ RUN apt-get update -y \
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
-# 安装 curl 和执行命令 curl -L https://foundry.paradigm.xyz | bash
+# 安装 curl 
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends curl \
     # Clean up
@@ -50,16 +50,8 @@ RUN apt-get update -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-# 运行 curl 命令
-# RUN  curl -L https://foundry.paradigm.xyz | bash
-# RUN 
-# 将bash替换成bash 再执行foundryup
-# RUN /bin/bash -c foundryup
-# COPY binaries from the builder stage  to  /app/target/release/server  and rename it to `api`
-COPY --from=builder  /app/target/release/tg_bot tg_bot 
+COPY --from=builder  /app/target/release/axum_app axum_app 
 
-# copy foundry contract to the container
-COPY --from=builder /app/foundry_contract_hello foundry_contract_hello
 
 # copy env
 COPY --from=builder /app/.env .env

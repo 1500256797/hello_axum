@@ -117,7 +117,7 @@ async fn main() {
     let app = Router::new()
         .fallback_service(static_files_service)
         .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
-        .route("/", get(|| async { "Hello, world!" }))
+        .route("/", get(|| async { "请打开swagger文档链接😃:http://localhost/swagger-ui/" }))
         .merge(controller::people_controller::router())
         .merge(controller::order_controller::router())
         .merge(controller::user_controller::router())

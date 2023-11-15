@@ -79,3 +79,28 @@ sqlx migrate add customers
 ```
  sqlx migrate run
 ```
+
+## docker-compose up -d
+
+docker-compose 如何每次都重新 build 镜像
+要求 docker-compose 每次重新构建镜像，可以使用 --build 标志来强制重新构建镜像。你可以在运行 docker-compose up 或 docker-compose build 命令时使用该标志。例如：
+
+```
+docker-compose up --build
+```
+
+这将使用 docker-compose.yml 文件中指定的构建上下文重新构建所有服务的镜像。如果你只想重新构建某个服务的镜像，可以使用以下命令：
+
+```
+docker-compose build --no-cache axum_app
+
+docker-compose build  axum_app
+```
+
+在这个命令中，--no-cache 标志指示构建过程中不使用缓存，以便强制重新构建镜像。<service-name> 是要构建镜像的服务名称。
+
+### docker-compose 最佳实践
+
+```
+docker-compose build  axum_app && docker-compose up -d
+```
