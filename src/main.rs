@@ -2,10 +2,8 @@ use axum::{routing::get, routing::post, Router};
 use bb8::Pool;
 use dotenv::dotenv;
 use hello_axum::redis_manager::RedisConnectionManager;
-use hello_axum::state;
+use hello_axum::{state, DBPoolOptions, DBPool,DBType};
 use jsonwebtoken::{ Algorithm,DecodingKey,Validation};
-use sqlx::postgres::PgPoolOptions;
-use sqlx::PgPool;
 use state::AppState;
 use tower::ServiceBuilder;
 use tower_http::cors::CorsLayer;
@@ -156,12 +154,12 @@ async fn main() {
 
 }
 
-async fn get_connection_pool() -> Result<PgPool, sqlx::Error> {
+async fn get_connection_pool() -> Result<DBPool, sqlx::Error> {
     // load .env
     dotenv().ok();
     // get database url
     let database_url_str = env::var("DATABASE_URL").expect("😀DATABASE_URL must be set");
-    let pool = PgPoolOptions::new()
+    let pool = DBPoolOptions::new()
         .idle_timeout(std::time::Duration::from_secs(2))
         .max_connections(100)
         .connect(&database_url_str)

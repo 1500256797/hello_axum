@@ -1,10 +1,16 @@
-pub mod redis_manager;
-pub mod state;
+pub type DBPool = sqlx::PgPool;
+pub type DBType = sqlx::Postgres;
+pub type DBPoolOptions = sqlx::postgres::PgPoolOptions;
+
 use ethers::{
     types::{Address, U256},
     utils::hex,
 };
 use eyre::Result;
+pub mod model;
+pub mod redis_manager;
+pub mod state;
+pub mod util;
 
 pub fn uint256_string_to_u256(s: &str) -> Result<U256, Box<dyn std::error::Error>> {
     let parsed = U256::from_dec_str(s)?;

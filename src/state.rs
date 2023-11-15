@@ -1,18 +1,17 @@
-use crate::redis_manager::RedisConnectionManager;
+use crate::{redis_manager::RedisConnectionManager, DBPool};
 use axum::extract::FromRef;
 use axum_jwt_auth::JwtDecoderState;
 use bb8::Pool;
-use sqlx::PgPool;
 
 #[derive(Clone)]
 pub struct AppState {
-    pub db_pool: PgPool,
+    pub db_pool: DBPool,
     pub redis_pool: Pool<RedisConnectionManager>,
     pub jwt_decoder: JwtDecoderState,
 }
 
-impl FromRef<AppState> for PgPool {
-    fn from_ref(app_state: &AppState) -> PgPool {
+impl FromRef<AppState> for DBPool {
+    fn from_ref(app_state: &AppState) -> DBPool {
         app_state.db_pool.clone()
     }
 }
