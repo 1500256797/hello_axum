@@ -98,7 +98,7 @@ async fn main() {
     let jwt_decoder : Decoder= LocalDecoder::new(keys, validation).into();
     // new appstate
     let pool = get_connection_pool().await.unwrap();
-    // sql migrate when axum app start
+    // sql will be migrated to db only when axum app start and  sql file changed
     sqlx::migrate!("./migrations")
         .run(&pool)
         .await.unwrap();

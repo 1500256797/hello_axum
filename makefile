@@ -7,3 +7,7 @@ run:
 migration:
 	# apply sql to database
 	@sqlx migrate run
+
+docker:
+	# rebuild axum_app image and restart docker container
+	@docker-compose build axum_app && docker-compose up -d    
