@@ -93,19 +93,26 @@ async fn main() {
     .build(redis_connection_manager).await.unwrap();
 
     // decoder 
-    // use jsonwebtoken::{DecodingKey, TokenData, Validation};
     let keys : Vec<DecodingKey> = vec![DecodingKey::from_secret("secret".as_ref())];
     let validation:Validation= jsonwebtoken::Validation::new(Algorithm::HS256);
     let jwt_decoder : Decoder= LocalDecoder::new(keys, validation).into();
     // new appstate
+    let pool = get_connection_pool().await.unwrap();
+    // sql migrate when axum sta
+    sqlx::migrate!("./migrations")
+        .run(&pool)
+        .await.unwrap();
+    //     // sql migrate
     let state: AppState = AppState {
-        db_pool: get_connection_pool().await.unwrap(),
+        db_pool: pool,
         redis_pool: redis_pool,
         jwt_decoder: JwtDecoderState{
             decoder : jwt_decoder
         }
     };
     
+
+
     // cors
     let cors = CorsLayer::very_permissive();
 
@@ -145,6 +152,8 @@ async fn main() {
         .serve(app.into_make_service())
         .await
         .unwrap();
+
+
 }
 
 async fn get_connection_pool() -> Result<PgPool, sqlx::Error> {

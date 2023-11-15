@@ -5,5 +5,5 @@ run:
 	@cargo run --bin axum_app
 
 migration:
-	# 2、apply sql to database
+	# apply sql to database
 	@sqlx migrate run
