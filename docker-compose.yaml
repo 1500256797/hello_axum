@@ -1,36 +1,42 @@
 version: '3.2'
 services:
     redis:
+        container_name: axum_redis
         image: redis:alpine
-        volumes:
-            - ./redis-data:/data
+        # volumes:
+        #     - ./redis-data:/data
         restart: always
         networks:
             - axum-network
     postgres:
-        image: postgres:alpine
-        volumes:
-            - ./postgres-data:/var/lib/postgresql/data
+        container_name: axum_postgres
+        image: postgres:16-alpine
+        # volumes:
+        #     - ../postgres-data:/var/lib/postgresql/data
         environment:
             - POSTGRES_USER=postgres
             - POSTGRES_PASSWORD=88888888
-            - POSTGRES_DB=axumdb3
+            - POSTGRES_DB=axum_app
         restart: always
         networks:
             - axum-network
         ports:
-            - '5433:5432'
-    axum:
-        build: .
-        ports:
-            - '80:3000'
-        env_file:
-            - .env
-        networks:
-            - axum-network
-        depends_on:
-            - redis
-            - postgres
+            - '5434:5432'
+    # axum_app:
+    #     image: axum_app
+    #     container_name: axum_app
+    #     build:
+    #         context: .
+    #         dockerfile: axum_app.dockerfile
+    #     ports:
+    #         - '80:3000'
+    #     env_file:
+    #         - .env
+    #     networks:
+    #         - axum-network
+    #     depends_on:
+    #         - redis
+    #         - postgres
 networks:
     axum-network:
         driver: bridge

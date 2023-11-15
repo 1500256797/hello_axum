@@ -1,4 +1,4 @@
-use crate::database;
+use crate::model;
 use axum::{
     extract::State,
     routing::{get, post},
@@ -25,7 +25,7 @@ pub fn router() -> Router<AppState> {
 )]
 pub async fn get_orders_handler(State(db_pool): State<PgPool>) -> String {
     // 查询order
-    let quer_as_res = database::order::Orders::get_orders_count(&db_pool)
+    let quer_as_res = model::order::Orders::get_orders_count(&db_pool)
         .await
         .unwrap();
     // 返回json
@@ -40,7 +40,7 @@ pub async fn get_orders_handler(State(db_pool): State<PgPool>) -> String {
 )]
 pub async fn v2_get_orders_handler(State(db_pool): State<PgPool>) -> String {
     // 查询order
-    let query_res = database::order::Orders::get_orders_count_v2(&db_pool)
+    let query_res = model::order::Orders::get_orders_count_v2(&db_pool)
         .await
         .unwrap();
     // 返回json
@@ -82,7 +82,7 @@ pub async fn create_order_handler(
     Json(order_req): Json<CreateOrderReq>,
 ) -> () {
     // 创建参数
-    let order_input = database::order::OrderInput {
+    let order_input = model::order::OrderInput {
         hash: 1234568,
         offerer: "sadsad".to_string(),
         zone: 123123,
@@ -101,7 +101,7 @@ pub async fn create_order_handler(
     };
 
     // insert
-    let quer_res = database::order::OrderInput::insert_order(&db_pool, &order_input).await;
+    let quer_res = model::order::OrderInput::insert_order(&db_pool, &order_input).await;
 
     match quer_res {
         Ok(resut) => {
@@ -124,7 +124,7 @@ pub async fn update_order_handler(
     Json(order_req): Json<CreateOrderReq>,
 ) -> String {
     // 创建参数
-    let order_input = database::order::OrderInput {
+    let order_input = model::order::OrderInput {
         hash: 1234568,
         offerer: "sadsad".to_string(),
         zone: 123123,
@@ -142,7 +142,7 @@ pub async fn update_order_handler(
         marked_invalid: false,
     };
     // update
-    let quer_res = database::order::OrderInput::update_orders(&db_pool, &order_input).await;
+    let quer_res = model::order::OrderInput::update_orders(&db_pool, &order_input).await;
     // match
     match quer_res {
         Ok(resut) => {

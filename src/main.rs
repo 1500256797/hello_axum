@@ -3,7 +3,7 @@ use bb8::Pool;
 use dotenv::dotenv;
 use hello_axum::redis_manager::RedisConnectionManager;
 use hello_axum::state;
-use jsonwebtoken::{Validation, Algorithm, DecodingKey};
+use jsonwebtoken::{ Algorithm,DecodingKey,Validation};
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
 use state::AppState;
@@ -17,7 +17,7 @@ use utoipa::{OpenApi, Modify, openapi::security::{SecurityScheme, ApiKey, ApiKey
 use axum_jwt_auth::{JwtDecoderState,LocalDecoder, Decoder};
 use utoipa_swagger_ui::SwaggerUi;
 mod controller;
-mod database;
+mod model;
 use tower_http::trace::{self, TraceLayer};
 
 #[tokio::main]
@@ -86,15 +86,16 @@ async fn main() {
     // load .env
     dotenv().ok();
     // get database url
-    let redis_url = env::var("REDIS_URL").expect("REDIS_URL must be set");
+    let redis_url = env::var("REDIS_URL").expect("😀REDIS_URL must be set");
     let redis_connection_manager = RedisConnectionManager::new(redis_url).unwrap();
     
     let redis_pool = Pool::builder()
     .build(redis_connection_manager).await.unwrap();
 
     // decoder 
-    let keys = vec![DecodingKey::from_secret("secret".as_ref())];
-    let validation = Validation::new(Algorithm::HS256);
+    // use jsonwebtoken::{DecodingKey, TokenData, Validation};
+    let keys : Vec<DecodingKey> = vec![DecodingKey::from_secret("secret".as_ref())];
+    let validation:Validation= jsonwebtoken::Validation::new(Algorithm::HS256);
     let jwt_decoder : Decoder= LocalDecoder::new(keys, validation).into();
     // new appstate
     let state: AppState = AppState {
@@ -150,7 +151,7 @@ async fn get_connection_pool() -> Result<PgPool, sqlx::Error> {
     // load .env
     dotenv().ok();
     // get database url
-    let database_url_str = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let database_url_str = env::var("DATABASE_URL").expect("😀DATABASE_URL must be set");
     let pool = PgPoolOptions::new()
         .idle_timeout(std::time::Duration::from_secs(2))
         .max_connections(100)
