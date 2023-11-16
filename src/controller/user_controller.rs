@@ -50,7 +50,6 @@ pub fn router() -> Router<AppState> {
 pub async fn user_login_handler(Json(user_login_param): Json<UserLoginReq>) -> Json<UserLoginResp> {
     // get user login param
     let header = Header::new(Algorithm::HS256);
-    // 生成jwt token
     let keys = EncodingKey::from_secret("secret".as_ref());
     let exp_time = Utc::now().timestamp() + 10000000000;
     // encode user info

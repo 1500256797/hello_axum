@@ -35,7 +35,6 @@ impl ModelOrderRelation {
         order_hash: String,
         status: i32,
     ) -> Result<(), Error> {
-        // 定义查询结果
         let quer_res = sqlx::query(
             "
             INSERT INTO model_order_relation (model_id, order_hash, status) VALUES ($1, $2, $3)
@@ -56,7 +55,6 @@ impl ModelOrderRelation {
         order_hash: String,
         status: i32,
     ) -> Result<(), Error> {
-        // 定义查询结果
         let quer_res = sqlx::query(
             "
             UPDATE model_order_relation SET status = $1 WHERE model_id = $2 AND order_hash = $3
@@ -74,7 +72,6 @@ impl ModelOrderRelation {
         pool: &PgPool,
         model_id: String,
     ) -> Result<Vec<Order>, Error> {
-        // 定义查询结果
         let quer_res = sqlx::query_as::<_, Order>(
             "
             SELECT * from orders where hash in 
